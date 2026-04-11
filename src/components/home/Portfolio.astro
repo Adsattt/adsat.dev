@@ -1,0 +1,60 @@
+---
+import { portfolio } from '../../data/portfolio';
+
+const commercialProjects = portfolio.filter((p) => p.type === 'commercial').slice(0, 4);
+---
+
+<div class="flex flex-col">
+  <div class="flex flex-col mb-10">
+    <span class="font-bold text-[20px]">Portfolio</span>
+    <span class="text-[18px] text-neutral-600 dark:text-neutral-400">
+      Work I have done for my clients
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+    {commercialProjects.map((project) => (
+      <a
+        href={`/portfolio?tab=commercial#${project.id}`}
+        class="flex flex-col justify-between h-full group"
+      >
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={project.title}
+            class="w-full aspect-[16/9] object-contain rounded-md border border-neutral-200 dark:border-neutral-800 mb-3 bg-neutral-50 dark:bg-neutral-900"
+          />
+        ) : (
+          <div class="w-full aspect-[16/9] rounded-md border border-neutral-200 dark:border-neutral-800 mb-3 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center text-neutral-400">
+            No image
+          </div>
+        )}
+
+        <div>
+          <div class="flex justify-between items-baseline mb-1">
+            <h2 class="font-medium text-neutral-900 dark:text-white group-hover:text-blue-500 transition-colors">
+              {project.title}
+            </h2>
+            {project.year && (
+              <span class="text-sm text-neutral-500 font-mono tracking-tight">
+                {project.year}
+              </span>
+            )}
+          </div>
+          <p class="text-neutral-500 dark:text-neutral-400 leading-relaxed text-sm">
+            {project.description}
+          </p>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <div class="flex justify-center mt-10">
+    <a
+      href="/portfolio"
+      class="px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+    >
+      See more
+    </a>
+  </div>
+</div>

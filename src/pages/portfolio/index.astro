@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import { portfolio } from '../../data/portfolio';
+
+const personalProjects = portfolio.filter(p => p.type === 'personal');
+const commercialProjects = portfolio.filter(p => p.type === 'commercial');
+---
+
+<BaseLayout title="Portfolio - adsat" description="My portfolio and client work." showHeader={true}>
+  <div class="w-full flex-col p-4 md:p-6 pb-20 justify-center gap-10 max-w-5xl mx-auto">
+    <h1 class="text-[35px] font-bold mb-4">Portfolio</h1>
+
+    <div class="mt-4" id="portfolio-tabs">
+      <!-- Tab Triggers -->
+      <div class="inline-flex h-9 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 p-1 text-neutral-500 dark:text-neutral-400 mb-8 w-full sm:w-[400px]">
+        <button
+          class="tab-trigger inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 w-1/2 data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-900 data-[state=active]:text-neutral-900 dark:data-[state=active]:text-neutral-100 data-[state=active]:shadow"
+          data-tab="commercial"
+          data-state="active"
+        >
+          Commercial Work
+        </button>
+        <button
+          class="tab-trigger inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 w-1/2 data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-900 data-[state=active]:text-neutral-900 dark:data-[state=active]:text-neutral-100 data-[state=active]:shadow"
+          data-tab="personal"
+          data-state="inactive"
+        >
+          Personal Work
+        </button>
+      </div>
+
+      <!-- Tab Content: Commercial -->
+      <div id="tab-commercial" class="tab-content data-[state=inactive]:hidden" data-state="active">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+          {commercialProjects.map((project) => (
+            <div id={`post-${project.id}`} class="flex flex-col justify-between h-full group">
+              {project.image ? (
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  class="w-full aspect-[16/9] object-contain rounded-md border border-neutral-200 dark:border-neutral-800 mb-3 bg-neutral-50 dark:bg-neutral-900"
+                />
+              ) : (
+                <div class="w-full aspect-[16/9] rounded-md border border-neutral-200 dark:border-neutral-800 mb-3 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center text-neutral-400">
+                  No image
+                </div>
+              )}
+              
+              <div>
+                <div class="flex justify-between items-baseline mb-1">
+                  <h2 class="font-medium text-neutral-900 dark:text-white">{project.title}</h2>
+                  {project.year && (
+                    <span class="text-sm text-neutral-500 font-mono tracking-tight">{project.year}</span>
+                  )}
+                </div>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-3">
+                  {project.miniDescription}
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  {project.tags?.map((tag) => (
+                    <span class="px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Tab Content: Personal -->
+      <div id="tab-personal" class="tab-content data-[state=inactive]:hidden" data-state="inactive">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+          {personalProjects.map((project) => (
+            <div id={`post-${project.id}`} class="flex flex-col justify-between h-full group">
+              {project.image ? (
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  class="w-full aspect-[16/9] object-contain rounded-md border border-neutral-200 dark:border-neutral-800 mb-3 bg-neutral-50 dark:bg-neutral-900"
+                />
+              ) : (
+                <div class="w-full aspect-[16/9] rounded-md border border-neutral-200 dark:border-neutral-800 mb-3 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center text-neutral-400">
+                  No image
+                </div>
+              )}
+              
+              <div>
+                <div class="flex justify-between items-baseline mb-1">
+                  <h2 class="font-medium text-neutral-900 dark:text-white">{project.title}</h2>
+                  {project.year && (
+                    <span class="text-sm text-neutral-500 font-mono tracking-tight">{project.year}</span>
+                  )}
+                </div>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-3">
+                  {project.miniDescription}
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  {project.tags?.map((tag) => (
+                    <span class="px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8">
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  function setupPortfolioTabs() {
+    const triggers = document.querySelectorAll('.tab-trigger');
+    const contents = document.querySelectorAll('.tab-content');
+
+    // Handle URL ?tab= params
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab') || 'commercial';
+
+    function setActiveTab(tabId) {
+      triggers.forEach(t => {
+        if (t.getAttribute('data-tab') === tabId) {
+          t.setAttribute('data-state', 'active');
+        } else {
+          t.setAttribute('data-state', 'inactive');
+        }
+      });
+
+      contents.forEach(c => {
+        if (c.id === `tab-${tabId}`) {
+          c.setAttribute('data-state', 'active');
+        } else {
+          c.setAttribute('data-state', 'inactive');
+        }
+      });
+    }
+
+    // Initial load
+    setActiveTab(activeTab);
+
+    // Click handlers
+    triggers.forEach(t => {
+      t.addEventListener('click', () => {
+        const tabId = t.getAttribute('data-tab');
+        if (tabId) {
+          setActiveTab(tabId);
+          // Optional: update URL
+          const newUrl = new URL(window.location);
+          newUrl.searchParams.set('tab', tabId);
+          window.history.replaceState({}, '', newUrl);
+        }
+      });
+    });
+  }
+
+  setupPortfolioTabs();
+  document.addEventListener('astro:after-swap', setupPortfolioTabs);
+</script>

@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts
+  .filter((post) => post.data.published !== false)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 8);
+---
+
+<div class="flex flex-col space-y-8">
+  <div class="flex flex-col">
+    <span class="font-bold text-[20px]">Writing</span>
+    <span class="text-[18px] text-neutral-600 dark:text-neutral-400">
+      Things I work on and learn about
+    </span>
+  </div>
+
+  <div class="flex flex-col space-y-3">
+    {publishedPosts.map((post) => (
+      <div class="flex sm:items-center flex-col sm:flex-row gap-0.5 sm:gap-4 group">
+        <a
+          href={`/writing/${post.id}`}
+          class="line-clamp-2 font-medium text-neutral-900 group-hover:text-blue-600 hover:underline dark:text-neutral-100 dark:group-hover:text-blue-500 transition-colors"
+        >
+          {post.data.title}
+        </a>
+        <div class="hidden sm:flex flex-1 border-t border-neutral-300 border-dashed shrink dark:border-neutral-700"></div>
+        <span class="text-neutral-500 dark:text-neutral-400 font-mono text-sm">
+          {post.data.date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })}
+        </span>
+      </div>
+    ))}
+  </div>
+
+  <div class="flex justify-center mt-10">
+    <a
+      href="/writing"
+      class="px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+    >
+      Read more
+    </a>
+  </div>
+</div>

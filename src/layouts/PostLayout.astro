@@ -1,0 +1,85 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Sidebar from '../components/Sidebar.astro';
+import BottomNav from '../components/BottomNav.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  date?: string;
+  backHref?: string;
+}
+
+const {
+  title,
+  description = '',
+  date,
+  backHref = '/writing',
+} = Astro.props;
+
+const pageTitle = `${title} - adsat`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="description" content={description} />
+
+    <!-- OG -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="adsat" />
+
+    <title>{pageTitle}</title>
+    <ClientRouter />
+
+    <script is:inline>
+      (function() {
+        function getInitialTheme() {
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme) return savedTheme;
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        const theme = getInitialTheme();
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+      })();
+    </script>
+  </head>
+  <body class="bg-white dark:bg-gray-1000 text-gray-1000 dark:text-white">
+    <div class="relative flex h-full min-h-screen w-full">
+      <Sidebar />
+
+      <div class="lg:ml-56 2xl:ml-72 flex-grow overflow-y-auto min-h-screen">
+        <PageHeader showBackButton={true} backHref={backHref} title="Writing" />
+
+        <div class="max-w-3xl mx-auto px-6 md:px-8 py-8 md:py-12">
+          <!-- Post header -->
+          <header class="mb-8">
+            <h1 class="text-3xl font-bold mb-2">{title}</h1>
+            {date && (
+              <p class="text-neutral-500 dark:text-neutral-400">{date}</p>
+            )}
+          </header>
+
+          <!-- Post content -->
+          <article class="prose max-w-none">
+            <slot />
+          </article>
+        </div>
+
+        <div class="max-w-3xl mx-auto px-6 md:px-8">
+          <Footer />
+        </div>
+      </div>
+
+      <BottomNav />
+    </div>
+  </body>
+</html>

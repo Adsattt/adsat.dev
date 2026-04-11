@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts
+  .filter((post) => post.data.published !== false)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Writing - adsat" description="Collection of my essays and articles." showHeader={true}>
+  <!-- Background dot pattern wrapper -->
+  <div class="relative min-h-screen">
+    <div 
+      class="absolute inset-0 z-0 opacity-50 dark:opacity-20"
+      style="
+        --dot-bg: transparent;
+        --dot-color: currentColor;
+        --dot-size: 1px;
+        --dot-space: 22px;
+        background:
+          linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+          linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+          var(--dot-color);
+      "
+    ></div>
+
+    <!-- Content -->
+    <div class="relative z-10 w-full flex-col p-4 md:p-6 pb-20 justify-center gap-10 max-w-5xl mx-auto">
+      <div class="flex flex-col space-y-8 mt-4 md:mt-8 bg-white/80 dark:bg-gray-1000/80 backdrop-blur-sm p-6 rounded-xl border border-neutral-200 dark:border-neutral-800">
+        <h1 class="font-bold text-[35px]">Writing</h1>
+        
+        <div class="flex flex-col space-y-4">
+          {publishedPosts.map((post) => (
+            <div class="flex sm:items-center flex-col sm:flex-row gap-1 sm:gap-4 group">
+              <a
+                href={`/writing/${post.id}`}
+                class="line-clamp-2 md:text-lg font-medium text-neutral-900 group-hover:text-blue-600 hover:underline dark:text-neutral-100 dark:group-hover:text-blue-500 transition-colors"
+              >
+                {post.data.title}
+              </a>
+              <div class="hidden sm:flex flex-1 border-t border-neutral-300 border-dashed shrink dark:border-neutral-700"></div>
+              <span class="text-neutral-500 dark:text-neutral-400 font-mono text-sm shrink-0">
+                {post.data.date.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
+            </div>
+          ))}
+          {publishedPosts.length === 0 && (
+            <p class="text-neutral-500">No posts published yet.</p>
+          )}
+        </div>
+      </div>
+      
+      <div class="mt-8 bg-white/80 dark:bg-gray-1000/80 backdrop-blur-sm p-6 rounded-xl border border-neutral-200 dark:border-neutral-800">
+        <Footer />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

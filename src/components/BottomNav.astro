@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { routes } from '../data/navigation';
+
+const currentPath = Astro.url.pathname;
+const mainNavItems = routes[0].items;
+
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+---
+
+<nav class="z-[100] block lg:hidden fixed bottom-0 left-0 right-0 h-[52px] bg-white/80 dark:bg-neutral-900/80 backdrop-blur-lg border-t border-neutral-200 dark:border-neutral-800">
+  <div class="grid h-full max-w-lg grid-cols-4 mx-auto">
+    {mainNavItems.map((item) => (
+      <a
+        href={item.href}
+        class:list={[
+          'inline-flex flex-col items-center justify-center px-5 relative transition-colors',
+          isActive(item.href)
+            ? 'text-neutral-900 font-semibold border-b-2 border-neutral-900 dark:text-white dark:border-white'
+            : 'text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white',
+        ]}
+      >
+        <span class="flex items-center justify-center scale-125">
+          <Icon name={item.icon} size={16} />
+        </span>
+      </a>
+    ))}
+  </div>
+</nav>

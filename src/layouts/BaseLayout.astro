@@ -1,0 +1,73 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Sidebar from '../components/Sidebar.astro';
+import BottomNav from '../components/BottomNav.astro';
+import PageHeader from '../components/PageHeader.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  showHeader?: boolean;
+}
+
+const {
+  title = 'adsat',
+  description = 'Software Developer & Builder.',
+  showHeader = true,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="description" content={description} />
+
+    <!-- OG -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="adsat" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@adsat_" />
+    <meta name="twitter:creator" content="@adsat_" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <title>{title}</title>
+    <ClientRouter />
+
+    <!-- Theme script (runs before render to prevent flash) -->
+    <script is:inline>
+      (function() {
+        function getInitialTheme() {
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme) return savedTheme;
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        const theme = getInitialTheme();
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+      })();
+    </script>
+  </head>
+  <body class="bg-white dark:bg-gray-1000 text-gray-1000 dark:text-white">
+    <div class="relative flex h-full min-h-screen w-full">
+      <!-- Sidebar (desktop fixed, mobile overlay) -->
+      <Sidebar />
+
+      <!-- Main content -->
+      <div class="lg:ml-56 2xl:ml-72 flex-grow overflow-y-auto min-h-screen">
+        {showHeader && <PageHeader />}
+        <slot />
+      </div>
+
+      <!-- Mobile bottom nav -->
+      <BottomNav />
+    </div>
+  </body>
+</html>

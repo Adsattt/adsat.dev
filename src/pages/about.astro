@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="About - adsat" description="More about me." showHeader={true}>
+  <div class="overflow-hidden">
+    <div class="w-full bg-white dark:bg-gray-1000 p-4 md:p-6">
+      
+      <!-- Placeholder Image Collage -->
+      <div class="relative max-w-5xl mx-auto min-h-[400px] md:min-h-[500px]">
+        <div class="absolute w-[35%] left-0 top-[25%] aspect-square overflow-hidden bg-neutral-200 dark:bg-neutral-800 rounded-md flex items-center justify-center text-neutral-400">
+          Image 1
+        </div>
+        <div class="z-[2] absolute w-[40%] left-[30%] top-[15%] overflow-hidden">
+          <div class="relative aspect-[0.8] w-full bg-neutral-300 dark:bg-neutral-700 rounded-md flex items-center justify-center text-neutral-500">
+            Image 2
+          </div>
+        </div>
+        <div class="absolute w-[40%] right-0 top-[40%] aspect-[2/1] overflow-hidden bg-neutral-200 dark:bg-neutral-800 rounded-md flex items-center justify-center text-neutral-400">
+          Image 3
+        </div>
+      </div>
+
+      <!-- Text content section -->
+      <div class="max-w-xl mx-auto mt-[-80px] sm:mt-[-40px] md:mt-16 px-4 md:px-0 text-neutral-900 dark:text-white">
+        <h1 class="text-[28px] md:text-[35px] font-semibold mb-6 md:mb-8">
+          Hi again, I'm adsat!
+        </h1>
+
+        <div class="space-y-6 md:space-y-10 text-[16px] md:text-[18px] font-medium leading-relaxed">
+          <p class="text-neutral-700 dark:text-neutral-300">
+            I am a Software Developer. I currently work at my company, building products and maintaining systems. I mainly focus on web applications and occasionally work on the backend.
+          </p>
+
+          <p class="text-neutral-700 dark:text-neutral-300">
+            Previously, I freelanced and developed various applications where I honed most of my software development skills.
+          </p>
+
+          <p class="text-neutral-700 dark:text-neutral-300">
+            Overall, I enjoy being a generalist and love to deep dive into how things work, and build an understanding from the bottom to the top.
+          </p>
+
+          <p class="text-neutral-700 dark:text-neutral-300">
+            Beyond software, I love exploring new technologies and writing about them.
+          </p>
+
+          <p class="text-neutral-700 dark:text-neutral-300">
+            If you want to chat, feel free to reach out via my social links!
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="max-w-5xl mx-auto px-6 lg:px-[30px]">
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>

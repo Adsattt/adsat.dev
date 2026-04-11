@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import Projects from '../components/home/Projects.astro';
+import Portfolio from '../components/home/Portfolio.astro';
+import Blog from '../components/home/Blog.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout showHeader={false}>
+  <div class="overflow-hidden">
+    <div class="flex flex-col gap-[138px] px-6 lg:px-[30px] container max-w-5xl mx-auto">
+      <Hero />
+      <Projects />
+      <Portfolio />
+      <Blog />
+      <!-- Photos section skipped as gallery is skipped -->
+    </div>
+    
+    <div class="container max-w-5xl mx-auto px-6 lg:px-[30px]">
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>

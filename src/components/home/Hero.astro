@@ -1,0 +1,81 @@
+---
+import Icon from '../Icon.astro';
+
+// Optional: You could fetch the latest blog post here if you want to show the banner
+const latestPost = {
+  title: 'Hello World',
+  slug: 'hello-world'
+};
+---
+
+<div class="pt-32">
+  <!-- Announcement Banner -->
+  {latestPost && (
+    <div class="mb-6 flex">
+      <a
+        href={`/writing/${latestPost.slug}`}
+        class="inline-flex items-center gap-2 rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 px-3 py-1 text-sm transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+      >
+        <span class="flex h-5 items-center rounded-full bg-neutral-900 dark:bg-white px-2 text-[10px] font-bold text-white dark:text-neutral-900">
+          NEW
+        </span>
+        <span class="text-neutral-700 dark:text-neutral-300">
+          Last post: {latestPost.title}
+        </span>
+        <Icon name="chevron-left" class="rotate-180 text-neutral-400" size={14} />
+      </a>
+    </div>
+  )}
+
+  <h1 class="text-[40px] font-normal mb-[19px]">
+    Hi, I'm <span class="font-bold">adsat!</span>
+  </h1>
+  <h2 class="text-xl mb-[1px] text-neutral-800 dark:text-neutral-200">
+    Software Developer, Builder, and occasional Writer.
+  </h2>
+  <p class="text-neutral-500 dark:text-neutral-400 text-base">
+    (Building things on the internet)
+  </p>
+
+  <div class="mt-20">
+    <div class="font-medium text-[15px] mb-[16px] text-neutral-600 dark:text-neutral-400">Currently</div>
+    <div class="flex flex-col gap-[12px]">
+      
+      <!-- Current Item 1 -->
+      <div class="flex items-start gap-4">
+        <div class="mt-[6px] relative flex items-center justify-center">
+          <span class="absolute inline-flex h-2.5 w-2.5 rounded-full bg-[#69E5FE] opacity-75 animate-ping-slow"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-[#69E5FE]"></span>
+        </div>
+        <div class="text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
+          <span>Working as a Software Developer and building things at </span>
+          <a
+            href="#"
+            class="underline decoration-[#69E5FE] underline-offset-[3px] font-medium"
+          >
+            My Company.
+          </a>
+        </div>
+      </div>
+
+      <!-- Current Item 2 -->
+      <div class="flex items-start gap-4">
+        <div class="mt-[6px] relative flex items-center justify-center">
+          <span class="absolute inline-flex h-2.5 w-2.5 rounded-full bg-blue-500 opacity-75 animate-ping-slow" style="animation-delay: 500ms;"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+        </div>
+        <div class="text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
+          <span>Tinkering with </span>
+          <a
+            href="#"
+            class="underline decoration-blue-500 underline-offset-[3px] font-medium"
+          >
+            Astro
+          </a>
+          <span> and other web technologies on weekends.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
