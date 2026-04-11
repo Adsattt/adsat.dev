@@ -29,9 +29,17 @@ const currentPath = Astro.url.pathname;
     updateThemeIcons();
   }
 
-  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
-  updateThemeIcons();
+  function setupThemeToggle() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) {
+      // Remove to prevent duplicates across transitions
+      toggleBtn.removeEventListener('click', toggleTheme);
+      toggleBtn.addEventListener('click', toggleTheme);
+    }
+    updateThemeIcons();
+  }
 
-  // Re-run on view transition
-  document.addEventListener('astro:after-swap', updateThemeIcons);
+  // Run on initial load and after every page transition swap
+  setupThemeToggle();
+  document.addEventListener('astro:page-load', setupThemeToggle);
 </script>

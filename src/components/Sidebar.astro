@@ -125,11 +125,17 @@ function isActive(href: string): boolean {
       overlay?.classList.add('hidden');
     }
 
+    // Remove old listeners to avoid duplicates
+    openBtn?.removeEventListener('click', openSidebar);
+    overlay?.removeEventListener('click', closeSidebar);
+
     openBtn?.addEventListener('click', openSidebar);
     overlay?.addEventListener('click', closeSidebar);
 
     // Close on nav link click (mobile)
     sidebar?.querySelectorAll('a').forEach((link) => {
+      // Remove first to be safe
+      link.removeEventListener('click', closeSidebar);
       link.addEventListener('click', () => {
         if (window.innerWidth < 1024) closeSidebar();
       });
@@ -141,5 +147,5 @@ function isActive(href: string): boolean {
   }
 
   setupSidebar();
-  document.addEventListener('astro:after-swap', setupSidebar);
+  document.addEventListener('astro:page-load', setupSidebar);
 </script>
