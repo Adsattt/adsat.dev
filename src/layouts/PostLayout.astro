@@ -2,14 +2,20 @@
 import { ClientRouter } from 'astro:transitions';
 import Sidebar from '../components/Sidebar.astro';
 import BottomNav from '../components/BottomNav.astro';
-import PageHeader from '../components/PageHeader.astro';
+import PlumBackground from '../components/PlumBackground.astro';
+import Toc from '../components/Toc.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+
+import type { MarkdownHeading } from 'astro';
 
 interface Props {
   title: string;
   description?: string;
   date?: string;
+  readingTime?: number;
+  tags?: string[];
+  headings?: MarkdownHeading[];
   backHref?: string;
 }
 
@@ -17,6 +23,9 @@ const {
   title,
   description = '',
   date,
+  readingTime,
+  tags = [],
+  headings = [],
   backHref = '/writing',
 } = Astro.props;
 
@@ -31,7 +40,6 @@ const pageTitle = `${title} - adsat`;
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="description" content={description} />
 
-    <!-- OG -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="article" />
@@ -40,15 +48,12 @@ const pageTitle = `${title} - adsat`;
     <title>{pageTitle}</title>
     <ClientRouter />
 
+    <!-- Anti-flash theme script -->
     <script is:inline>
       (function() {
-        function getInitialTheme() {
-          const savedTheme = localStorage.getItem('theme');
-          if (savedTheme) return savedTheme;
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        const theme = getInitialTheme();
-        document.documentElement.classList.toggle('dark', theme === 'dark');
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
       })();
     </script>
   </head>
@@ -56,26 +61,81 @@ const pageTitle = `${title} - adsat`;
     <div class="relative flex h-full min-h-screen w-full">
       <Sidebar />
 
+      <!-- Plum background (applies to the right content area) -->
+      <PlumBackground />
+
       <div class="lg:ml-56 2xl:ml-72 flex-grow overflow-y-auto min-h-screen">
-        <PageHeader showBackButton={true} backHref={backHref} title="Writing" />
-
-        <div class="max-w-3xl mx-auto px-6 md:px-8 py-8 md:py-12">
-          <!-- Post header -->
-          <header class="mb-8">
-            <h1 class="text-3xl font-bold mb-2">{title}</h1>
-            {date && (
-              <p class="text-neutral-500 dark:text-neutral-400">{date}</p>
-            )}
-          </header>
-
-          <!-- Post content -->
-          <article class="prose max-w-none">
-            <slot />
-          </article>
+        <!-- Mobile back header -->
+        <div class="sticky top-0 z-30 flex items-center gap-3 px-5 py-3.5 bg-white/80 dark:bg-gray-1000/80 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 lg:hidden">
+          <a
+            href={backHref}
+            class="flex items-center justify-center w-7 h-7 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            aria-label="Go back"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </a>
+          <span class="text-sm font-medium text-neutral-500 dark:text-neutral-400">Writing</span>
         </div>
 
-        <div class="max-w-3xl mx-auto px-6 md:px-8">
-          <Footer />
+        <!-- Two-column layout: prose + TOC -->
+        <div class="flex gap-12 px-6 lg:px-10 py-10 max-w-6xl mx-auto">
+          <!-- Main content -->
+          <div class="flex-1 min-w-0">
+            <!-- Back link (desktop only) -->
+            <a
+              href={backHref}
+              class="hidden lg:inline-flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors mb-8 group"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:-translate-x-0.5">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Writing
+            </a>
+
+            <!-- Post header -->
+            <header class="mb-8">
+              <h1 class="text-3xl font-bold mb-4 slide-enter" style="--enter-stage: 1">
+                {title}
+              </h1>
+              <div class="flex flex-wrap items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400 slide-enter" style="--enter-stage: 2">
+                {date && (
+                  <time class="font-mono">{date}</time>
+                )}
+                {readingTime && (
+                  <>
+                    <span class="text-neutral-300 dark:text-neutral-600">·</span>
+                    <span>{readingTime} min read</span>
+                  </>
+                )}
+                {tags.length > 0 && (
+                  <>
+                    <span class="text-neutral-300 dark:text-neutral-600">·</span>
+                    <div class="flex flex-wrap gap-1.5">
+                      {tags.map((tag) => (
+                        <span class="px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </header>
+
+            <!-- Post body -->
+            <article class="prose max-w-none slide-enter" style="--enter-stage: 3">
+              <slot />
+            </article>
+
+            <div class="mt-16">
+              <Footer />
+            </div>
+          </div>
+
+          <!-- TOC sidebar (desktop only, xl+) -->
+          <Toc headings={headings} />
         </div>
       </div>
 

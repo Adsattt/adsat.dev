@@ -143,19 +143,77 @@ body::after {
   }
 }
 
-/* ========== View Transition Animations ========== */
+/* ========== View Transition – Circle-Expand Dark Mode ========== */
+/* Disable default cross-fade so JS-driven clip-path animation can take over */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
 ::view-transition-old(root) {
-  animation: fade-out 0.15s ease-in;
+  z-index: 1;
 }
 ::view-transition-new(root) {
-  animation: fade-in 0.15s ease-out;
+  z-index: 9999;
+}
+/* When currently dark, invert the layer order */
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+.dark::view-transition-new(root) {
+  z-index: 1;
 }
 
-@keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
+/* ========== Slide-Enter Staggered Animation ========== */
+@keyframes slide-enter {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .slide-enter {
+    --enter-step: 60ms;
+    --enter-initial: 0ms;
+    --enter-stage: 0;
+    animation: slide-enter 0.6s both 1;
+    animation-delay: calc(var(--enter-initial) + var(--enter-step) * var(--enter-stage));
+  }
+
+  .slide-enter-content > *:not(aside) {
+    --enter-step: 60ms;
+    --enter-initial: 0ms;
+    animation: slide-enter 0.6s both 1;
+  }
+  .slide-enter-content > *:nth-child(1)  { animation-delay: calc(60ms * 1); }
+  .slide-enter-content > *:nth-child(2)  { animation-delay: calc(60ms * 2); }
+  .slide-enter-content > *:nth-child(3)  { animation-delay: calc(60ms * 3); }
+  .slide-enter-content > *:nth-child(4)  { animation-delay: calc(60ms * 4); }
+  .slide-enter-content > *:nth-child(5)  { animation-delay: calc(60ms * 5); }
+  .slide-enter-content > *:nth-child(6)  { animation-delay: calc(60ms * 6); }
+  .slide-enter-content > *:nth-child(7)  { animation-delay: calc(60ms * 7); }
+  .slide-enter-content > *:nth-child(8)  { animation-delay: calc(60ms * 8); }
+  .slide-enter-content > *:nth-child(9)  { animation-delay: calc(60ms * 9); }
+  .slide-enter-content > *:nth-child(10) { animation-delay: calc(60ms * 10); }
+  .slide-enter-content > *:nth-child(11) { animation-delay: calc(60ms * 11); }
+  .slide-enter-content > *:nth-child(12) { animation-delay: calc(60ms * 12); }
+  .slide-enter-content > *:nth-child(13) { animation-delay: calc(60ms * 13); }
+  .slide-enter-content > *:nth-child(14) { animation-delay: calc(60ms * 14); }
+  .slide-enter-content > *:nth-child(15) { animation-delay: calc(60ms * 15); }
+  .slide-enter-content > *:nth-child(16) { animation-delay: calc(60ms * 16); }
+  .slide-enter-content > *:nth-child(17) { animation-delay: calc(60ms * 17); }
+  .slide-enter-content > *:nth-child(18) { animation-delay: calc(60ms * 18); }
+  .slide-enter-content > *:nth-child(19) { animation-delay: calc(60ms * 19); }
+  .slide-enter-content > *:nth-child(20) { animation-delay: calc(60ms * 20); }
 }
+
+/* fade utility for panels */
+@keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+.fade-in  { animation: fade-in 0.3s forwards; }
+.fade-out { animation: fade-out 0.3s forwards; }

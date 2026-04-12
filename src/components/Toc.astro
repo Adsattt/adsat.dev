@@ -1,0 +1,116 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+}
+
+const { headings } = Astro.props
+
+// Filter to h2 and h3 only
+const filteredHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3)
+---
+
+{filteredHeadings.length > 0 && (
+  <aside class="hidden xl:block w-56 shrink-0">
+    <nav
+      id="toc-nav"
+      class="sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto pr-2 text-sm"
+    >
+      <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
+        On this page
+      </p>
+      <table-of-contents>
+        <ul class="space-y-1.5">
+          {filteredHeadings.map((h) => (
+            <li
+              style={h.depth === 3 ? 'padding-left: 0.875rem' : ''}
+            >
+              <a
+                href={`#${h.slug}`}
+                class="toc-link block py-0.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors leading-snug"
+                data-heading-id={h.slug}
+              >
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </table-of-contents>
+    </nav>
+  </aside>
+)}
+
+<style>
+  .toc-link[aria-current="true"] {
+    color: rgb(17 24 39); /* neutral-900 */
+    font-weight: 500;
+  }
+  :global(.dark) .toc-link[aria-current="true"] {
+    color: rgb(243 244 246); /* neutral-100 */
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  class TableOfContents extends HTMLElement {
+    #observer: IntersectionObserver | null = null
+
+    connectedCallback() {
+      this.#init()
+    }
+
+    disconnectedCallback() {
+      this.#observer?.disconnect()
+      this.#observer = null
+    }
+
+    #init() {
+      const links = Array.from(
+        this.querySelectorAll<HTMLAnchorElement>('.toc-link')
+      )
+      if (!links.length) return
+
+      // Build map: heading el → toc anchor
+      const headingMap = new Map<Element, HTMLAnchorElement>()
+      for (const link of links) {
+        const id = link.getAttribute('data-heading-id')
+        if (!id) continue
+        const heading = document.getElementById(id)
+        if (heading) headingMap.set(heading, link)
+      }
+
+      let activeHeading: Element | null = null
+
+      this.#observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const link = headingMap.get(entry.target)
+              if (!link) continue
+
+              // Remove aria-current from previous
+              if (activeHeading) {
+                headingMap.get(activeHeading)?.removeAttribute('aria-current')
+              }
+              link.setAttribute('aria-current', 'true')
+              activeHeading = entry.target
+            }
+          }
+        },
+        {
+          rootMargin: '0% 0% -70% 0%',
+          threshold: 0,
+        }
+      )
+
+      for (const heading of headingMap.keys()) {
+        this.#observer.observe(heading)
+      }
+    }
+  }
+
+  if (!customElements.get('table-of-contents')) {
+    customElements.define('table-of-contents', TableOfContents)
+  }
+</script>
