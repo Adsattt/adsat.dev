@@ -67,7 +67,6 @@
 
     const handleClick = (event: MouseEvent) => {
       const supportsTransition =
-        // @ts-expect-error – View Transitions API
         typeof document.startViewTransition === 'function' &&
         !window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -83,7 +82,6 @@
         Math.max(y, innerHeight - y)
       )
 
-      // @ts-expect-error
       const transition = document.startViewTransition(() => toggle())
 
       transition.ready.then(() => {

@@ -9,12 +9,14 @@ interface Props {
   title?: string;
   description?: string;
   showHeader?: boolean;
+  image?: string;
 }
 
 const {
   title = 'adsat',
   description = 'Software Developer & Builder.',
   showHeader = true,
+  image = '/og-image.png', // Fallback global OG image can be created later
 } = Astro.props;
 ---
 
@@ -31,13 +33,15 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="adsat" />
+    {image && <meta property="og:image" content={new URL(image, Astro.site || Astro.url).toString()} />}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
     <meta name="twitter:site" content="@adsat_" />
     <meta name="twitter:creator" content="@adsat_" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={new URL(image, Astro.site || Astro.url).toString()} />}
 
     <title>{title}</title>
     <ClientRouter />
@@ -45,13 +49,14 @@ const {
     <!-- Theme script (runs before render to prevent flash) -->
     <script is:inline>
       (function() {
-        function getInitialTheme() {
+        const setTheme = () => {
           const savedTheme = localStorage.getItem('theme');
-          if (savedTheme) return savedTheme;
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        const theme = getInitialTheme();
-        document.documentElement.classList.toggle('dark', theme === 'dark');
+          const theme = savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+        };
+        
+        setTheme();
+        document.addEventListener('astro:after-swap', setTheme);
       })();
     </script>
   </head>
