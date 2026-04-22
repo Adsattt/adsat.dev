@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/* Base tailwind-like reset (UnoCSS injects this, but we can keep font declarations) */
 
 /* ========== Custom Fonts ========== */
 @font-face {
@@ -17,43 +17,25 @@
   font-display: swap;
 }
 
-/* ========== CSS Custom Properties ========== */
-@theme {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-
-  --color-gray-150: #EEEFF2;
-  --color-gray-1000: #050505;
-  --color-lotion: #fafafa;
-  --color-erie: #1C1C1E;
-  --color-surface-light: #f3f4f6;
-  --color-surface-dark: #111827;
-  --color-accent-cyan: #69E5FE;
-
-  --animate-marquee: marquee 25s linear infinite;
-  --animate-ping-slow: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-
-  @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-  }
-
-  @keyframes ping-slow {
-    75%, 100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
-}
-
 /* ========== Base Styles ========== */
 html {
-  @apply max-h-screen text-base antialiased font-sans;
+  max-height: 100vh;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   overscroll-behavior: none;
 }
 
 body {
   overscroll-behavior: none;
-  @apply bg-white dark:bg-gray-1000 text-gray-1000 dark:text-white;
+  background-color: #ffffff;
+  color: #050505; /* gray-1000 */
+}
+.dark body {
+  background-color: #050505;
+  color: #ffffff;
 }
 
 /* Safari overscroll background */
@@ -62,7 +44,10 @@ body::after {
   position: fixed;
   inset: -50%;
   z-index: -1;
-  @apply bg-white dark:bg-gray-1000;
+  background-color: #ffffff;
+}
+.dark body::after {
+  background-color: #050505;
 }
 
 /* ========== Scrollbar ========== */
@@ -88,59 +73,101 @@ body::after {
 
 ::-webkit-scrollbar-track {
   border-radius: 4px;
-  @apply bg-neutral-100 dark:bg-neutral-800;
+  background-color: #f5f5f5; /* neutral-100 */
+}
+.dark ::-webkit-scrollbar-track {
+  background-color: #262626; /* neutral-800 */
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  @apply bg-neutral-400/35;
+  background-color: rgba(163, 163, 163, 0.35); /* neutral-400/35 */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-neutral-400/50;
+  background-color: rgba(163, 163, 163, 0.5); /* neutral-400/50 */
 }
 
 /* ========== Prose / Blog Typography ========== */
 .prose {
-  @apply text-gray-800 dark:text-gray-200;
+  color: #1f2937; /* gray-800 */
+}
+.dark .prose {
+  color: #e5e7eb; /* gray-200 */
+}
 
-  h1 { @apply text-3xl font-bold mt-8 mb-4 text-gray-1000 dark:text-white; }
-  h2 { @apply text-2xl font-bold mt-8 mb-3 text-gray-1000 dark:text-white; }
-  h3 { @apply text-xl font-semibold mt-6 mb-2 text-gray-1000 dark:text-white; }
+.prose h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; color: #050505; }
+.dark .prose h1 { color: #ffffff; }
 
-  p { @apply my-4 leading-7; }
+.prose h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; color: #050505; }
+.dark .prose h2 { color: #ffffff; }
 
-  a {
-    @apply text-blue-500 hover:underline;
-  }
+.prose h3 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #050505; }
+.dark .prose h3 { color: #ffffff; }
 
-  ul, ol { @apply my-4 pl-6; }
-  li { @apply my-1; }
-  ul li { @apply list-disc; }
-  ol li { @apply list-decimal; }
+.prose p { margin-top: 1rem; margin-bottom: 1rem; line-height: 1.75rem; }
 
-  blockquote {
-    @apply border-l-4 border-neutral-300 dark:border-neutral-600 pl-4 my-4 italic text-gray-600 dark:text-gray-400;
-  }
+.prose a { color: #3b82f6; text-decoration: none; }
+.prose a:hover { text-decoration: underline; }
 
-  code {
-    @apply bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-sm font-mono;
-  }
+.prose ul, .prose ol { margin-top: 1rem; margin-bottom: 1rem; padding-left: 1.5rem; }
+.prose li { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+.prose ul li { list-style-type: disc; }
+.prose ol li { list-style-type: decimal; }
 
-  pre {
-    @apply bg-neutral-900 text-neutral-100 p-5 rounded-lg my-6 overflow-x-auto text-sm;
-  }
-  pre code {
-    @apply bg-transparent p-0;
-  }
+.prose blockquote {
+  border-left-width: 4px;
+  border-color: #d4d4d8;
+  padding-left: 1rem;
+  margin-top: 1rem; margin-bottom: 1rem;
+  font-style: italic;
+  color: #4b5563; /* gray-600 */
+}
+.dark .prose blockquote {
+  border-color: #525252;
+  color: #9ca3af; /* gray-400 */
+}
 
-  img {
-    @apply rounded-lg my-6;
-  }
+.prose code {
+  background-color: #f5f5f5;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+.dark .prose code {
+  background-color: #262626;
+}
 
-  hr {
-    @apply border-neutral-200 dark:border-neutral-700 my-8;
-  }
+.prose pre {
+  background-color: #171717; /* neutral-900 */
+  color: #f5f5f5; /* neutral-100 */
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem; margin-bottom: 1.5rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.prose img {
+  border-radius: 0.5rem;
+  margin-top: 1.5rem; margin-bottom: 1.5rem;
+}
+
+.prose hr {
+  border-width: 0;
+  border-top-width: 1px;
+  border-color: #e5e5e5;
+  margin-top: 2rem; margin-bottom: 2rem;
+}
+.dark .prose hr {
+  border-color: #404040;
 }
 
 /* ========== View Transition – Circle-Expand Dark Mode ========== */

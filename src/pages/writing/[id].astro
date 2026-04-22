@@ -31,6 +31,7 @@ const readingTime = getReadingTime(post.body ?? '');
   readingTime={readingTime}
   tags={post.data.tags}
   headings={headings}
+  image={`/og/${post.id}.png`}
 >
   <Content />
 </PostLayout>

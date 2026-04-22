@@ -54,63 +54,94 @@ const filteredHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3)
 
 <script>
   class TableOfContents extends HTMLElement {
-    #observer: IntersectionObserver | null = null
+    #observer: IntersectionObserver | null = null;
+    #headingMap = new Map<Element, HTMLAnchorElement>();
+    #activeHeading: Element | null = null;
+    #activeLink: HTMLAnchorElement | null = null;
 
     connectedCallback() {
-      this.#init()
+      // Use requestIdleCallback for better performance
+      const onIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
+      onIdle(() => this.#init());
     }
 
     disconnectedCallback() {
-      this.#observer?.disconnect()
-      this.#observer = null
+      this.#observer?.disconnect();
+      this.#observer = null;
+      this.#headingMap.clear();
     }
 
     #init() {
       const links = Array.from(
         this.querySelectorAll<HTMLAnchorElement>('.toc-link')
-      )
-      if (!links.length) return
+      );
+      if (!links.length) return;
 
-      // Build map: heading el → toc anchor
-      const headingMap = new Map<Element, HTMLAnchorElement>()
+      // Build map: heading el -> toc anchor
       for (const link of links) {
-        const id = link.getAttribute('data-heading-id')
-        if (!id) continue
-        const heading = document.getElementById(id)
-        if (heading) headingMap.set(heading, link)
+        const id = link.getAttribute('data-heading-id');
+        if (!id) continue;
+        const heading = document.getElementById(id);
+        if (heading) this.#headingMap.set(heading, link);
       }
-
-      let activeHeading: Element | null = null
 
       this.#observer = new IntersectionObserver(
         (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              const link = headingMap.get(entry.target)
-              if (!link) continue
+          if (!entries.length) return;
 
-              // Remove aria-current from previous
-              if (activeHeading) {
-                headingMap.get(activeHeading)?.removeAttribute('aria-current')
-              }
-              link.setAttribute('aria-current', 'true')
-              activeHeading = entry.target
-            }
+          // Get the latest triggered heading and determine which one should be active
+          let latest = entries[0];
+          for (let i = 1; i < entries.length; i++) {
+            if (entries[i].time > latest.time) latest = entries[i];
           }
+          
+          if (!latest.target) return;
+
+          // If heading is below 1/4 of viewport, highlight previous heading instead to prevent premature active state
+          const isLocatedBelow = latest.boundingClientRect.top > window.innerHeight / 4;
+          const targetHeading = isLocatedBelow 
+            ? this.#getPreviousHeading(latest.target) 
+            : latest.target;
+
+          if (!targetHeading || targetHeading === this.#activeHeading) return;
+
+          const link = this.#headingMap.get(targetHeading);
+          if (!link) return;
+
+          // Remove aria-current from previous
+          if (this.#activeLink) {
+            this.#activeLink.removeAttribute('aria-current');
+          }
+          link.setAttribute('aria-current', 'true');
+          
+          // Auto-scroll TOC to keep active link visible
+          link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          this.#activeHeading = targetHeading;
+          this.#activeLink = link;
         },
         {
-          rootMargin: '0% 0% -70% 0%',
+          rootMargin: '0% 0% -75% 0%',
           threshold: 0,
         }
-      )
+      );
 
-      for (const heading of headingMap.keys()) {
-        this.#observer.observe(heading)
+      for (const heading of this.#headingMap.keys()) {
+        this.#observer.observe(heading);
       }
+    }
+
+    #getPreviousHeading(currentHeading: Element) {
+      let prev = null;
+      for (const h of this.#headingMap.keys()) {
+        if (h === currentHeading) return prev;
+        prev = h;
+      }
+      return null;
     }
   }
 
   if (!customElements.get('table-of-contents')) {
-    customElements.define('table-of-contents', TableOfContents)
+    customElements.define('table-of-contents', TableOfContents);
   }
 </script>
