@@ -1,36 +1,36 @@
 ---
-import { getCollection, render } from 'astro:content';
-import PostLayout from '../../layouts/PostLayout.astro';
-import { getReadingTime } from '../../utils/reading-time';
+import { getCollection, render } from 'astro:content'
+import PostLayout from '../../layouts/PostLayout.astro'
+import { getReadingTime } from '../../utils/reading-time'
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map(post => ({
+  const posts = await getCollection('blog')
+  return posts.map((post) => ({
     params: { id: post.id },
     props: { post },
-  }));
+  }))
 }
 
-const { post } = Astro.props;
-const { Content, headings } = await render(post);
+const { post } = Astro.props
+const { Content, headings } = await render(post)
 
 const formattedDate = post.data.date.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
-});
+})
 
 // Estimate reading time from the raw body text
-const readingTime = getReadingTime(post.body ?? '');
+const readingTime = getReadingTime(post.body ?? '')
 ---
 
 <PostLayout
   title={post.data.title}
   description={post.data.description}
   date={formattedDate}
-  readingTime={readingTime}
+  {readingTime}
   tags={post.data.tags}
-  headings={headings}
+  {headings}
   image={`/og/${post.id}.png`}
 >
   <Content />

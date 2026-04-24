@@ -1,17 +1,21 @@
-import { defineConfig, presetIcons, presetWind, transformerDirectives } from 'unocss'
+import {
+  defineConfig,
+  presetIcons,
+  presetWind3,
+  transformerDirectives,
+} from 'unocss'
 
 export default defineConfig({
   presets: [
-    presetWind(),
+    presetWind3(),
     presetIcons({
       collections: {
-        lucide: () => import('@iconify-json/lucide/icons.json').then(i => i.default),
-      }
+        lucide: () =>
+          import('@iconify-json/lucide/icons.json').then((i) => i.default),
+      },
     }),
   ],
-  transformers: [
-    transformerDirectives(),
-  ],
+  transformers: [transformerDirectives()],
   theme: {
     fontFamily: {
       sans: '"Inter", system-ui, -apple-system, sans-serif',
@@ -29,35 +33,41 @@ export default defineConfig({
     },
     animation: {
       keyframes: {
-        marquee: '{0% { transform: translateX(0%); } 100% { transform: translateX(-50%); }}',
+        'marquee':
+          '{0% { transform: translateX(0%); } 100% { transform: translateX(-50%); }}',
         'ping-slow': '{75%, 100% { transform: scale(2); opacity: 0; }}',
-        'slide-enter': '{0% { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; }}',
+        'slide-enter':
+          '{0% { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; }}',
         'fade-in': '{from { opacity: 0; } to { opacity: 1; }}',
         'fade-out': '{from { opacity: 1; } to { opacity: 0; }}',
       },
       durations: {
-        marquee: '25s',
+        'marquee': '25s',
         'ping-slow': '2s',
         'slide-enter': '0.6s',
         'fade-in': '0.3s',
         'fade-out': '0.3s',
       },
       timingFns: {
-        marquee: 'linear',
+        'marquee': 'linear',
         'ping-slow': 'cubic-bezier(0, 0, 0.2, 1)',
         'fade-in': 'forwards',
         'fade-out': 'forwards',
       },
       counts: {
-        marquee: 'infinite',
+        'marquee': 'infinite',
         'ping-slow': 'infinite',
-      }
-    }
+      },
+    },
   },
   rules: [
-    [/^slide-enter$/, () => ({ 
-      'animation': 'slide-enter 0.6s both 1',
-      'animation-delay': 'calc(var(--enter-initial, 0ms) + var(--enter-step, 60ms) * var(--enter-stage, 0))'
-    })]
-  ]
+    [
+      /^slide-enter$/,
+      () => ({
+        'animation': 'slide-enter 0.6s both 1',
+        'animation-delay':
+          'calc(var(--enter-initial, 0ms) + var(--enter-step, 60ms) * var(--enter-stage, 0))',
+      }),
+    ],
+  ],
 })

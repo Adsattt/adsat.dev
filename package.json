@@ -9,9 +9,18 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check",
+    "format": "prettier . --check --ignore-unknown",
+    "format:fix": "prettier . --write --ignore-unknown --cache",
+    "lint": "eslint . --ext .ts,.tsx,.astro --cache",
+    "lint:fix": "eslint . --ext .ts,.tsx,.astro --fix --cache",
+    "toolbar:on": "astro preferences enable devToolbar",
+    "toolbar:off": "astro preferences disable devToolbar",
+    "prepare": "simple-git-hooks"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.8",
     "@astrojs/mdx": "^5.0.3",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
@@ -27,8 +36,36 @@
     "unocss": "^66.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@iconify-json/lucide": "^1.2.2",
     "@types/node": "^22.10.0",
-    "@unocss/astro": "^66.6.8"
+    "@unocss/astro": "^66.6.8",
+    "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-js": "github:eslint/js",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "globals": "^17.5.0",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "simple-git-hooks": "^2.13.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*": [
+      "eslint --fix --cache",
+      "prettier --write --ignore-unknown --cache"
+    ]
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "simple-git-hooks"
+    ]
   }
 }

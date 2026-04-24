@@ -1,12 +1,12 @@
 export interface Project {
-  id: number;
-  title: string;
-  description: string;
-  image?: string;
-  link?: string;
-  externalLink?: string;
-  active?: boolean;
-  tags?: string[];
+  id: number
+  title: string
+  description: string
+  image?: string
+  link?: string
+  externalLink?: string
+  active?: boolean
+  tags?: string[]
 }
 
 export const projects: Project[] = [
@@ -31,4 +31,4 @@ export const projects: Project[] = [
     active: false,
     tags: ['Archived', 'Rust'],
   },
-];
+]

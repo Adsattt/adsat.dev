@@ -21,9 +21,7 @@
   ) {
     const ctx = canvas.getContext('2d')!
     const dpr = window.devicePixelRatio || 1
-    // @ts-expect-error vendor prefixes
-    const bsr = ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1
-    const dpi = _dpi || dpr / bsr
+    const dpi = _dpi || dpr
 
     canvas.style.width = `${width}px`
     canvas.style.height = `${height}px`
@@ -79,13 +77,16 @@
         ctx.stroke()
         counter.value += 1
 
-        if (nx < -100 || nx > width + 100 || ny < -100 || ny > height + 100) return
+        if (nx < -100 || nx > width + 100 || ny < -100 || ny > height + 100)
+          return
 
         const rad1 = rad + random() * R15
         const rad2 = rad - random() * R15
         const rate = counter.value <= THRESHOLD ? 0.8 : 0.5
-        if (random() < rate) pendingSteps.push(() => step(nx, ny, rad1, counter))
-        if (random() < rate) pendingSteps.push(() => step(nx, ny, rad2, counter))
+        if (random() < rate)
+          pendingSteps.push(() => step(nx, ny, rad1, counter))
+        if (random() < rate)
+          pendingSteps.push(() => step(nx, ny, rad2, counter))
       }
 
       const frame = () => {

@@ -1,22 +1,23 @@
-export type PortfolioType = 'personal' | 'commercial';
+export type PortfolioType = 'personal' | 'commercial'
 
 export interface Portfolio {
-  id: number;
-  title: string;
-  description: string;
-  miniDescription?: string;
-  year?: string;
-  image?: string;
-  link?: string;
-  tags?: string[];
-  type: PortfolioType;
+  id: number
+  title: string
+  description: string
+  miniDescription?: string
+  year?: string
+  image?: string
+  link?: string
+  tags?: string[]
+  type: PortfolioType
 }
 
 export const portfolio: Portfolio[] = [
   {
     id: 0,
     title: 'Client Project 1',
-    description: 'A web application built for a client. Placeholder description.',
+    description:
+      'A web application built for a client. Placeholder description.',
     miniDescription: 'Web Application',
     year: '2026',
     tags: ['React', 'TypeScript', 'Node'],
@@ -49,4 +50,4 @@ export const portfolio: Portfolio[] = [
     tags: ['TypeScript', 'Open Source'],
     type: 'personal',
   },
-];
+]

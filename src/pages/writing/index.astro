@@ -1,22 +1,25 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PlumBackground from '../../components/PlumBackground.astro';
-import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PlumBackground from '../../components/PlumBackground.astro'
+import { getCollection } from 'astro:content'
 
-const allPosts = await getCollection('blog');
+const allPosts = await getCollection('blog')
 const publishedPosts = allPosts
   .filter((post) => post.data.published !== false)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 
 // Group posts by year
-const grouped = publishedPosts.reduce((acc, post) => {
-  const year = post.data.date.getFullYear().toString();
-  if (!acc[year]) acc[year] = [];
-  acc[year].push(post);
-  return acc;
-}, {} as Record<string, typeof publishedPosts>);
+const grouped = publishedPosts.reduce(
+  (acc, post) => {
+    const year = post.data.date.getFullYear().toString()
+    if (!acc[year]) acc[year] = []
+    acc[year].push(post)
+    return acc
+  },
+  {} as Record<string, typeof publishedPosts>
+)
 
-const years = Object.keys(grouped).sort((a, b) => Number(b) - Number(a));
+const years = Object.keys(grouped).sort((a, b) => Number(b) - Number(a))
 ---
 
 <BaseLayout
@@ -24,60 +27,71 @@ const years = Object.keys(grouped).sort((a, b) => Number(b) - Number(a));
   description="Essays, notes, and things I learn while building."
   showHeader={true}
 >
-  <!-- Animated plum background -->
+  {/* Animated plum background */}
   <PlumBackground />
 
   <div class="min-h-screen px-6 lg:px-10 py-10 max-w-3xl mx-auto">
     <h1 class="text-3xl font-bold mb-2 slide-enter" style="--enter-stage: 1">
       Writing
     </h1>
-    <p class="text-neutral-500 dark:text-neutral-400 mb-12 slide-enter" style="--enter-stage: 2">
+    <p
+      class="text-neutral-500 dark:text-neutral-400 mb-12 slide-enter"
+      style="--enter-stage: 2"
+    >
       Essays, notes, and things I learn.
     </p>
 
-    {publishedPosts.length === 0 ? (
-      <p class="text-neutral-500 dark:text-neutral-400 slide-enter" style="--enter-stage: 3">
-        No posts yet — check back soon!
-      </p>
-    ) : (
-      <div class="space-y-10">
-        {years.map((year, yi) => (
-          <div>
-            <!-- Year separator -->
-            <div
-              class="slide-enter relative flex items-center gap-4 mb-4 select-none"
-              style={`--enter-stage: ${yi * 6 + 3}`}
-            >
-              <span class="text-sm font-mono text-neutral-400 dark:text-neutral-500 shrink-0">
-                {year}
-              </span>
-              <div class="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
-            </div>
+    {
+      publishedPosts.length === 0 ? (
+        <p
+          class="text-neutral-500 dark:text-neutral-400 slide-enter"
+          style="--enter-stage: 3"
+        >
+          No posts yet — check back soon!
+        </p>
+      ) : (
+        <div class="space-y-10">
+          {years.map((year, yi) => (
+            <div>
+              {/* Year separator */}
+              <div
+                class="slide-enter relative flex items-center gap-4 mb-4 select-none"
+                style={`--enter-stage: ${yi * 6 + 3}`}
+              >
+                <span class="text-sm font-mono text-neutral-400 dark:text-neutral-500 shrink-0">
+                  {year}
+                </span>
+                <div class="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+              </div>
 
-            <!-- Posts in this year -->
-            <ul class="space-y-0">
-              {grouped[year].map((post, pi) => (
-                <li
-                  class="slide-enter"
-                  style={`--enter-stage: ${yi * 6 + pi + 4}`}
-                >
-                  <a
-                    href={`/writing/${post.id}`}
-                    class="group py-3 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 border-b border-neutral-100 dark:border-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-900/40 rounded-md px-2 -mx-2 transition-colors"
+              {/* Posts in this year */}
+              <ul class="space-y-0">
+                {grouped[year].map((post, pi) => (
+                  <li
+                    class="slide-enter"
+                    style={`--enter-stage: ${yi * 6 + pi + 4}`}
                   >
-                    <span class="flex-1 text-neutral-800 dark:text-neutral-200 group-hover:text-neutral-950 dark:group-hover:text-white font-medium transition-colors">
-                      {post.data.title}
-                    </span>
-                    <span class="text-sm font-mono text-neutral-400 dark:text-neutral-500 shrink-0">
-                      {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    )}
+                    <a
+                      href={`/writing/${post.id}`}
+                      class="group py-3 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 border-b border-neutral-100 dark:border-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-900/40 rounded-md px-2 -mx-2 transition-colors"
+                    >
+                      <span class="flex-1 text-neutral-800 dark:text-neutral-200 group-hover:text-neutral-950 dark:group-hover:text-white font-medium transition-colors">
+                        {post.data.title}
+                      </span>
+                      <span class="text-sm font-mono text-neutral-400 dark:text-neutral-500 shrink-0">
+                        {post.data.date.toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )
+    }
   </div>
 </BaseLayout>

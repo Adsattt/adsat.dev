@@ -1,13 +1,13 @@
 export interface NavItem {
-  href: string;
-  label: string;
-  icon: string;
-  isExternal?: boolean;
+  href: string
+  label: string
+  icon: string
+  isExternal?: boolean
 }
 
 export interface NavGroup {
-  label: string | null;
-  items: NavItem[];
+  label: string | null
+  items: NavItem[]
 }
 
 export const routes: NavGroup[] = [
@@ -18,7 +18,7 @@ export const routes: NavGroup[] = [
       { href: '/about', label: 'About', icon: 'user' },
       { href: '/portfolio', label: 'Portfolio', icon: 'layers' },
       { href: '/writing', label: 'Writing', icon: 'pen-line' },
-    ]
+    ],
   },
   {
     label: 'Projects',
@@ -29,7 +29,7 @@ export const routes: NavGroup[] = [
         icon: 'github',
         isExternal: true,
       },
-    ]
+    ],
   },
   {
     label: 'Online',
@@ -58,6 +58,6 @@ export const routes: NavGroup[] = [
         icon: 'instagram',
         isExternal: true,
       },
-    ]
-  }
-];
+    ],
+  },
+]
