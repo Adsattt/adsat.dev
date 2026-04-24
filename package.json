@@ -13,9 +13,13 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.3",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
     "@iconify/json": "^2.2.300",
     "@unocss/reset": "^66.0.0",
     "astro": "^6.1.5",
+    "astro-expressive-code": "^0.41.7",
+    "astro-robots-txt": "^1.0.0",
     "lucide-static": "^1.8.0",
     "satori": "^0.26.0",
     "satori-html": "^0.3.2",
