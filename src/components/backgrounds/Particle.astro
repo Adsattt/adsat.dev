@@ -1,0 +1,103 @@
+---
+// inspired by: https://github.com/JulianLaval/canvas-particle-network
+---
+
+<bg-particle class="fixed inset-0 -z-10 pointer-events-none print:hidden">
+</bg-particle>
+
+<script>
+  import p5 from 'p5'
+  import type { default as P5Instance } from 'p5'
+
+  interface Particle {
+    x: number
+    y: number
+    velocity: {
+      x: number
+      y: number
+    }
+  }
+
+  class BgParticleElement extends HTMLElement {
+    p5Instance: P5Instance | null = null
+
+    connectedCallback() {
+      const sketch = (p: P5Instance) => {
+        const COLOR = '#88888825'
+        const VELOCITY = 0.8
+        const DENSITY = 6000
+        const DISTANCE = 120
+
+        const width = window.innerWidth
+        const height = window.innerHeight
+        const particles: Particle[] = []
+
+        function createParticle() {
+          const x = p.random(width)
+          const y = p.random(height)
+          const velocity = {
+            x: (p.random() - 0.5) * VELOCITY,
+            y: (p.random() - 0.5) * VELOCITY,
+          }
+
+          return { x, y, velocity }
+        }
+
+        function updateParticle(particle: Particle) {
+          if (particle.x > width + 20 || particle.x < -20) {
+            particle.velocity.x = -particle.velocity.x
+          }
+          if (particle.y > height + 20 || particle.y < -20) {
+            particle.velocity.y = -particle.velocity.y
+          }
+
+          particle.x += particle.velocity.x
+          particle.y += particle.velocity.y
+        }
+
+        function drawParticle(particle: Particle) {
+          p.noStroke()
+          p.fill(COLOR)
+          p.circle(particle.x, particle.y, 3)
+        }
+
+        p.setup = () => {
+          p.createCanvas(width, height)
+          const particleCount = (width * height) / DENSITY
+          for (let i = 0; i < particleCount; i++) {
+            particles.push(createParticle())
+          }
+        }
+
+        p.draw = () => {
+          p.clear()
+          particles.forEach((particle) => {
+            updateParticle(particle)
+            drawParticle(particle)
+            particles.forEach((other) => {
+              const d = p.dist(particle.x, particle.y, other.x, other.y)
+              if (d < DISTANCE) {
+                p.stroke(COLOR)
+                p.strokeWeight(0.5)
+                p.line(particle.x, particle.y, other.x, other.y)
+              }
+            })
+          })
+        }
+      }
+
+      this.p5Instance = new p5(sketch, this)
+    }
+
+    disconnectedCallback() {
+      if (this.p5Instance) {
+        this.p5Instance.remove()
+        this.p5Instance = null
+      }
+    }
+  }
+
+  if (!customElements.get('bg-particle')) {
+    customElements.define('bg-particle', BgParticleElement)
+  }
+</script>

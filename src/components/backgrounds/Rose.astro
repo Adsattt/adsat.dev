@@ -1,0 +1,133 @@
+---
+// inspired by: https://codepen.io/bleepbloop/pen/vYEdWV
+
+const roses = [
+  {
+    id: 1,
+    petals: 28,
+    scale: 0.008,
+    rotation: 80,
+    topRange: [-10, -5],
+    leftRange: [10, 20],
+    scaleRange: [0.04, 0.06],
+    rotationRange: [-3, 3],
+    smallOnMobile: false,
+  },
+  {
+    id: 2,
+    petals: 26,
+    scale: 0.005,
+    rotation: 80,
+    topRange: [80, 85],
+    leftRange: [-5, 5],
+    scaleRange: [0.02, 0.04],
+    rotationRange: [-3, 3],
+    smallOnMobile: false,
+  },
+  {
+    id: 3,
+    petals: 30,
+    scale: 0.01,
+    rotation: 80,
+    topRange: [45, 65],
+    leftRange: [87, 92],
+    scaleRange: [0.06, 0.08],
+    rotationRange: [-3, 3],
+    smallOnMobile: true,
+  },
+]
+---
+
+<div
+  id="bg-rose"
+  class="fixed inset-0 -z-10 w-full h-full opacity-50 dark:opacity-100 pointer-events-none print:hidden"
+  style="mask-image: radial-gradient(circle, transparent, black);"
+>
+  {
+    roses.map((rose) => (
+      <rose-bloom
+        class="absolute w-[200px] h-[200px] -translate-x-1/2 -translate-y-1/2"
+        style={{ top: `${rose.topRange[0]}%`, left: `${rose.leftRange[0]}%` }}
+        data-top-range={rose.topRange.join(',')}
+        data-left-range={rose.leftRange.join(',')}
+        data-scale-range={rose.scaleRange.join(',')}
+        data-rotation-range={rose.rotationRange.join(',')}
+        data-small-on-mobile={rose.smallOnMobile.toString()}
+      >
+        {Array.from({ length: rose.petals }, (_, i) => (
+          <div
+            class="absolute left-1/2 h-full w-full transition-[transform] duration-[50000ms] ease-[cubic-bezier(0,0,.6,.95)] origin-bottom"
+            style={{
+              'z-index': rose.petals - i,
+              'transform': `scale(${i * rose.scale}, ${i * rose.scale}) rotate(${i * rose.rotation}deg)`,
+            }}
+          >
+            <div class="absolute w-full h-full rounded-tl-[50%_35%] rounded-br-[35%_50%] rounded-tr-[45%] rounded-bl-[10%] bg-[radial-gradient(ellipse_at_bottom_left,#ffffff_0%,#fefefe_70%,#88888855_95%)] dark:bg-[radial-gradient(ellipse_at_bottom_left,#000000_0%,#000000_70%,#77777755_85%)] -rotate-45" />
+          </div>
+        ))}
+      </rose-bloom>
+    ))
+  }
+</div>
+
+<script>
+  class RoseBloom extends HTMLElement {
+    get #config() {
+      return {
+        topRange: this.#parseRange(this.dataset.topRange) ?? [50, 50],
+        leftRange: this.#parseRange(this.dataset.leftRange) ?? [50, 50],
+        scaleRange: this.#parseRange(this.dataset.scaleRange) ?? [0.05, 0.06],
+        rotationRange: this.#parseRange(this.dataset.rotationRange) ?? [-3, 3],
+        smallOnMobile: this.dataset.smallOnMobile === 'true',
+      }
+    }
+
+    connectedCallback() {
+      requestAnimationFrame(() => {
+        this.#animate()
+      })
+    }
+
+    #parseRange(raw: string | undefined) {
+      if (!raw) return null
+      const [a, b] = raw.split(',').map((s) => parseFloat(s.trim()))
+      if (Number.isFinite(a) && Number.isFinite(b)) return [a, b]
+      return null
+    }
+
+    #getRandomPercentage(min: number, max: number) {
+      return (Math.random() * (max - min) + min).toFixed(2) + '%'
+    }
+
+    #getRandom(min: number, max: number) {
+      return Math.random() * (max - min) + min
+    }
+
+    #animate() {
+      const { topRange, leftRange, scaleRange, rotationRange } = this.#config
+      this.style.top = this.#getRandomPercentage(topRange[0], topRange[1])
+      this.style.left = this.#getRandomPercentage(leftRange[0], leftRange[1])
+
+      const r = 80
+      const isMobile = window.innerWidth < 640
+      const scaleBase = this.#getRandom(
+        isMobile ? scaleRange[0] * 0.8 : scaleRange[0],
+        isMobile ? scaleRange[1] * 0.8 : scaleRange[1]
+      )
+      const rotationBase = this.#getRandom(rotationRange[0], rotationRange[1])
+
+      const petals = Array.from(this.querySelectorAll(':scope > div'))
+      for (let i = 0; i < petals.length; i++) {
+        const petal = petals[i]
+        if (!(petal instanceof HTMLElement)) continue
+        const scaleValue = (i + 1) * scaleBase
+        const rotateValue = (i + 1) * (r + rotationBase)
+        petal.style.transform = `scale(${scaleValue}, ${scaleValue}) rotate(${rotateValue}deg)`
+      }
+    }
+  }
+
+  if (!customElements.get('rose-bloom')) {
+    customElements.define('rose-bloom', RoseBloom)
+  }
+</script>
