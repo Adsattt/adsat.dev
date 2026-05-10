@@ -3,6 +3,7 @@ import {
   presetIcons,
   presetWind3,
   transformerDirectives,
+  transformerVariantGroup,
 } from 'unocss'
 
 export default defineConfig({
@@ -15,7 +16,7 @@ export default defineConfig({
       },
     }),
   ],
-  transformers: [transformerDirectives()],
+  transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {
     fontFamily: {
       sans: '"Inter", system-ui, -apple-system, sans-serif',
