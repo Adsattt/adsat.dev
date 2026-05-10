@@ -3,6 +3,7 @@ import globals from 'globals'
 import js from '@eslint/js'
 import ts from 'typescript-eslint'
 import astro from 'eslint-plugin-astro'
+import astroParser from 'astro-eslint-parser'
 import prettier from 'eslint-config-prettier/flat'
 
 export default defineConfig(
@@ -26,6 +27,16 @@ export default defineConfig(
   ts.configs.stylistic,
   astro.configs.recommended,
   astro.configs['jsx-a11y-recommended'],
+  {
+    files: ['**/*.astro'],
+    languageOptions: {
+      parser: astroParser,
+      parserOptions: {
+        parser: ts.parser,
+        extraFileExtensions: ['.astro'],
+      },
+    },
+  },
   prettier,
   {
     rules: {
