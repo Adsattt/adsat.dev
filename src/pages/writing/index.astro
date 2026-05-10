@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import PlumBackground from '../../components/PlumBackground.astro'
 import { getCollection } from 'astro:content'
 
 const allPosts = await getCollection('blog')
@@ -26,10 +25,8 @@ const years = Object.keys(grouped).sort((a, b) => Number(b) - Number(a))
   title="Writing - adsat"
   description="Essays, notes, and things I learn while building."
   showHeader={true}
+  bgType="plum"
 >
-  {/* Animated plum background */}
-  <PlumBackground />
-
   <div class="min-h-screen px-6 lg:px-10 py-10 max-w-3xl mx-auto">
     <h1 class="text-3xl font-bold mb-2 slide-enter" style="--enter-stage: 1">
       Writing
