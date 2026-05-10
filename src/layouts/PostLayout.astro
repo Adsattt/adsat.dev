@@ -2,7 +2,7 @@
 import { ClientRouter } from 'astro:transitions'
 import Sidebar from '../components/Sidebar.astro'
 import BottomNav from '../components/BottomNav.astro'
-import PlumBackground from '../components/PlumBackground.astro'
+import Background from '../components/backgrounds/Background.astro'
 import Toc from '../components/Toc.astro'
 import Footer from '../components/Footer.astro'
 import '../styles/global.css'
@@ -18,6 +18,7 @@ interface Props {
   headings?: MarkdownHeading[]
   backHref?: string
   image?: string
+  bgType?: string
 }
 
 const {
@@ -29,6 +30,7 @@ const {
   headings = [],
   backHref = '/writing',
   image,
+  bgType = 'plum',
 } = Astro.props
 
 const pageTitle = `${title} - adsat`
@@ -98,8 +100,8 @@ const pageTitle = `${title} - adsat`
     <div class="relative flex h-full min-h-screen w-full">
       <Sidebar />
 
-      <!-- Plum background (applies to the right content area) -->
-      <PlumBackground />
+      <!-- Background (applies to the right content area) -->
+      <Background type={bgType} />
 
       <div class="lg:ml-56 2xl:ml-72 flex-grow overflow-y-auto min-h-screen">
         <!-- Mobile back header -->
