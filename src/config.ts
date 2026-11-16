@@ -1,7 +1,7 @@
 import type { SiteConfig } from './types'
 
 export const SITE: SiteConfig = {
-  website: 'https://adsat.site',
+  website: 'https://adsat.dev',
   base: '/',
   title: 'adsat',
   description: 'A personal web made',
