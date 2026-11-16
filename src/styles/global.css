@@ -228,35 +228,77 @@ body::after {
   border-color: #404040;
 }
 
-/* ========== View Transition – Circle-Expand Dark Mode ========== */
-/* Disable default cross-fade so JS-driven clip-path animation can take over */
-::view-transition-old(root),
-::view-transition-new(root) {
+/* ========== View Transitions ========== */
+/* Page navigation (ClientRouter): a quick, subtle cross-fade. */
+::view-transition-group(root) {
+  animation-duration: 200ms;
+}
+
+/* Theme toggle: circle reveal. Everything below is scoped to .theme-switching
+   (set by ThemeToggle.astro) so it never affects normal page navigation. */
+.theme-switching::view-transition-old(root),
+.theme-switching::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
-::view-transition-old(root) {
+.theme-switching::view-transition-old(root) {
   z-index: 1;
 }
-::view-transition-new(root) {
+.theme-switching::view-transition-new(root) {
   z-index: 9999;
 }
-/* When currently dark, invert the layer order */
-.dark::view-transition-old(root) {
-  z-index: 9999;
+/* Kill per-element color transitions while the theme flips, otherwise the live
+   "new" snapshot cross-fades colors inside the expanding circle (muddy edge). */
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
 }
-.dark::view-transition-new(root) {
+
+/* The animation lives in CSS (not JS) so `fill: both` applies from the very
+   first frame. Driven via --vt-x / --vt-y / --vt-r set on <html>.
+   html.dark is already the *target* theme while the transition runs. */
+
+/* → light: the new (light) layer is on top and expands from the click point */
+.theme-switching:not(.dark)::view-transition-new(root) {
+  animation: vt-reveal 500ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+/* → dark: the old (light) layer is on top and shrinks into the click point */
+.theme-switching.dark::view-transition-old(root) {
+  z-index: 9999;
+  animation: vt-hide 500ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.theme-switching.dark::view-transition-new(root) {
   z-index: 1;
 }
 
-/* ========== Slide-Enter Staggered Animation ========== */
+@keyframes vt-reveal {
+  from {
+    clip-path: circle(0px at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+  to {
+    clip-path: circle(
+      var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 50%)
+    );
+  }
+}
+@keyframes vt-hide {
+  from {
+    clip-path: circle(
+      var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 50%)
+    );
+  }
+  to {
+    clip-path: circle(0px at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+}
+
+/* ========== Enter Animation (fade only, lightly staggered) ========== */
 @keyframes slide-enter {
-  0% {
-    transform: translateY(10px);
+  from {
     opacity: 0;
   }
   to {
-    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -266,7 +308,7 @@ body::after {
     --enter-step: 60ms;
     --enter-initial: 0ms;
     --enter-stage: 0;
-    animation: slide-enter 0.6s both 1;
+    animation: slide-enter 0.35s ease-out both 1;
     animation-delay: calc(
       var(--enter-initial) + var(--enter-step) * var(--enter-stage)
     );
@@ -275,7 +317,7 @@ body::after {
   .slide-enter-content > *:not(aside) {
     --enter-step: 60ms;
     --enter-initial: 0ms;
-    animation: slide-enter 0.6s both 1;
+    animation: slide-enter 0.35s ease-out both 1;
   }
   .slide-enter-content > *:nth-child(1) {
     animation-delay: calc(60ms * 1);
