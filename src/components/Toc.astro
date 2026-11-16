@@ -115,8 +115,20 @@ const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3)
           }
           link.setAttribute('aria-current', 'true')
 
-          // Auto-scroll TOC to keep active link visible
-          link.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          // Keep the active link visible by scrolling ONLY the TOC container.
+          // (scrollIntoView also scrolls the page itself, which fights the
+          // user's scroll and makes the page bounce back up.)
+          const nav = link.closest<HTMLElement>('#toc-nav')
+          if (nav && nav.scrollHeight > nav.clientHeight) {
+            const navRect = nav.getBoundingClientRect()
+            const linkRect = link.getBoundingClientRect()
+            const offset =
+              linkRect.top -
+              navRect.top -
+              nav.clientHeight / 2 +
+              linkRect.height / 2
+            nav.scrollTo({ top: nav.scrollTop + offset, behavior: 'smooth' })
+          }
 
           this.#activeHeading = targetHeading
           this.#activeLink = link
